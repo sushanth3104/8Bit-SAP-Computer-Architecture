@@ -1,0 +1,131 @@
+$date
+	Fri Jun 28 01:24:33 2024
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb $end
+$var wire 8 ! BusOut [7:0] $end
+$var wire 8 " ALUIn [7:0] $end
+$var reg 1 # ALowerIn $end
+$var reg 1 $ Ain $end
+$var reg 1 % Aout $end
+$var reg 8 & BusIn [7:0] $end
+$var reg 1 ' clk $end
+$var reg 1 ( rst $end
+$scope module dut $end
+$var wire 8 ) ALUIn [7:0] $end
+$var wire 1 # ALowerIn $end
+$var wire 1 $ Ain $end
+$var wire 1 % Aout $end
+$var wire 8 * BusIn [7:0] $end
+$var wire 1 ' clk $end
+$var wire 1 ( rst $end
+$var wire 8 + BusOut [7:0] $end
+$var reg 8 , temp [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx ,
+bz +
+b0 *
+bx )
+0(
+0'
+b0 &
+0%
+0$
+x#
+bx "
+bz !
+$end
+#5000
+1'
+#10000
+0'
+#12000
+b0 "
+b0 )
+b0 ,
+1(
+#15000
+1'
+#17000
+0(
+#19000
+b1011100 &
+b1011100 *
+#20000
+0'
+#22000
+1$
+#25000
+b1011100 "
+b1011100 )
+b1011100 ,
+1'
+#30000
+0'
+#32000
+0$
+#34000
+b1011100 !
+b1011100 +
+1%
+#35000
+1'
+#39000
+bz !
+bz +
+0%
+#40000
+0'
+#44000
+b0 "
+b0 )
+b0 ,
+1(
+#45000
+1'
+#47000
+0(
+#50000
+b11011110 &
+b11011110 *
+0'
+#52000
+1#
+#55000
+b1110 "
+b1110 )
+b1110 ,
+1'
+#60000
+0'
+#62000
+0#
+#64000
+b1110 !
+b1110 +
+1%
+#65000
+1'
+#70000
+0'
+#75000
+1'
+#80000
+0'
+#85000
+1'
+#90000
+0'
+#95000
+1'
+#100000
+0'
