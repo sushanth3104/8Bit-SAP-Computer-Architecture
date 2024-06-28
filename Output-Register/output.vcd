@@ -1,0 +1,106 @@
+$date
+	Sat Jun 29 01:34:37 2024
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb $end
+$var wire 8 ! Out [7:0] $end
+$var reg 8 " BusIn [7:0] $end
+$var reg 1 # OutLoad $end
+$var reg 1 $ clk $end
+$var reg 1 % rst $end
+$scope module dut $end
+$var wire 8 & BusIn [7:0] $end
+$var wire 8 ' Out [7:0] $end
+$var wire 1 # OutLoad $end
+$var wire 1 $ clk $end
+$var wire 1 % rst $end
+$var reg 8 ( temp [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+bx (
+bx '
+b0 &
+0%
+0$
+0#
+b0 "
+bx !
+$end
+#2000
+b0 !
+b0 '
+b0 (
+1%
+#5000
+1$
+#6000
+0%
+#7000
+b1011100 "
+b1011100 &
+#9000
+1#
+#10000
+0$
+#15000
+b1011100 !
+b1011100 '
+b1011100 (
+1$
+#16000
+b111100 "
+b111100 &
+#18000
+0#
+#20000
+0$
+#24000
+1#
+#25000
+b111100 !
+b111100 '
+b111100 (
+1$
+#29000
+0#
+#30000
+0$
+#35000
+1$
+#40000
+0$
+#45000
+1$
+#50000
+0$
+#55000
+1$
+#60000
+0$
+#65000
+1$
+#70000
+0$
+#75000
+1$
+#80000
+0$
+#85000
+1$
+#90000
+0$
+#95000
+1$
+#100000
+0$
