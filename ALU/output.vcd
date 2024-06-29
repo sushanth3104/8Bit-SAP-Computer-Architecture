@@ -1,0 +1,97 @@
+$date
+	Sun Jun 30 01:27:51 2024
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb $end
+$var wire 2 ! Flags [1:0] $end
+$var wire 8 " BusOut [7:0] $end
+$var reg 1 # ALUOut $end
+$var reg 8 $ Accumulator [7:0] $end
+$var reg 8 % BRegister [7:0] $end
+$var reg 2 & Operation [1:0] $end
+$scope module dut $end
+$var wire 1 # ALUOut $end
+$var wire 8 ' Accumulator [7:0] $end
+$var wire 8 ( BRegister [7:0] $end
+$var wire 2 ) Operation [1:0] $end
+$var wire 2 * Flags [1:0] $end
+$var wire 8 + BusOut [7:0] $end
+$var reg 9 , result [8:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 ,
+bz +
+b10 *
+b0 )
+b0 (
+b0 '
+b0 &
+b0 %
+b0 $
+0#
+bz "
+b10 !
+$end
+#5000
+b0 !
+b0 *
+b1000 ,
+b10 %
+b10 (
+b110 $
+b110 '
+#7000
+b1000 "
+b1000 +
+1#
+#9000
+bz "
+bz +
+0#
+#11000
+b100 ,
+b1 &
+b1 )
+#13000
+b100 "
+b100 +
+1#
+#15000
+bz "
+bz +
+0#
+#17000
+b111 ,
+b10 &
+b10 )
+#19000
+b111 "
+b111 +
+1#
+#21000
+bz "
+bz +
+0#
+#23000
+b101 ,
+b101 "
+b101 +
+1#
+b11 &
+b11 )
+#25000
+bz "
+bz +
+0#
+#100000
