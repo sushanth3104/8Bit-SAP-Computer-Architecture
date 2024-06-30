@@ -30,7 +30,7 @@ always@(*) begin
 end
 
 assign BusOut = ALUOut ? result[7:0] : 8'bzzzz_zzzz;
-assign Flags = {~|result,result[8]};  // Zero,Carry
+assign Flags = {~|result[7:0],result[8]};  // Zero,Carry
 
 
 endmodule
