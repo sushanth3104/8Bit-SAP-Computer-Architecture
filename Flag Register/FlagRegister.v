@@ -2,6 +2,7 @@
 
 module FlagRegister(
     input [1:0]FlagsIn,
+    input FlagEnable,
     input clk,
     output [1:0]FlagOut 
 );
@@ -9,6 +10,7 @@ module FlagRegister(
 reg [1:0]temp;
 
 always @(posedge clk ) begin
+    if(FlagEnable ==1'b1)
     temp <= FlagsIn ;
 end
 assign FlagOut = temp;
