@@ -1,9 +1,9 @@
 `timescale 1ns/1ps
 
-`define ADD 2'b00
-`define SUB 2'b01
-`define INC 2'b10
-`define DCR 2'b11
+`define ALU_ADD 2'b00
+`define ALU_SUB 2'b01
+`define ALU_INC 2'b10
+`define ALU_DCR 2'b11
 
 
 module ALU(
@@ -19,10 +19,10 @@ reg [8:0]result;
 always@(*) begin
 
     case(Operation) 
-    `ADD : result <= Accumulator + BRegister ;
-    `SUB : result <= Accumulator - BRegister ;
-    `INC : result <= Accumulator + 1 ;
-    `DCR : result <= Accumulator - 1 ;
+    `ALU_ADD : result <= Accumulator + BRegister ;
+    `ALU_SUB : result <= Accumulator - BRegister ;
+    `ALU_INC : result <= Accumulator + 1 ;
+    `ALU_DCR : result <= Accumulator - 1 ;
     default : result <= result ;
 
     endcase
