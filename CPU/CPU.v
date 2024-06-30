@@ -15,6 +15,62 @@
 `define HLT  4'b1100
 
 
+`define ALU_ADD 2'b00
+`define ALU_SUB 2'b01
+`define ALU_INC 2'b10
+`define ALU_DCR 2'b11
+
+
+
+
+module RAM(
+    input [7:0]BusIn,
+    input [3:0]Addrs,
+    input clk,RAMOut,RAMIn,
+    output [7:0]BusOut
+);
+
+reg [7:0]temp[15:0];
+reg [7:0]temp_out;
+
+initial begin
+    $readmemh("./Instructions.txt",temp,0,15);
+end
+
+always @(posedge clk or Addrs)
+begin
+    if (RAMIn == 1'b1)
+    temp[Addrs] <= BusIn ;
+    else 
+    temp_out <= temp[Addrs];
+end
+
+assign BusOut = RAMOut ? temp_out : 8'bzzzz_zzzz ;
+
+
+endmodule
+
+
+
+module FlagRegister(
+    input [1:0]FlagsIn,
+    input FlagEnable,
+    input FlagOutEnable,
+    input clk,
+    output [1:0]FlagOut 
+);
+
+reg [1:0]temp;
+
+always @(posedge clk ) begin
+    if(FlagEnable ==1'b1)
+    temp <= FlagsIn ;
+end
+assign FlagOut = FlagOutEnable ? temp: 2'bzz;
+
+
+endmodule
+
 module controlunit(
     input [3:0]opcode,
     input [1:0]flagReg,
@@ -249,6 +305,204 @@ always @(state,opcode)begin
 end
 
 assign ControlSignal = temp ;
+
+
+
+endmodule
+
+
+
+
+module ALU(
+    input [7:0]Accumulator,BRegister,
+    input [1:0]Operation,
+    input ALUOut,
+    output [7:0]BusOut,
+    output [1:0]Flags
+);
+
+reg [8:0]result;
+
+always@(*) begin
+
+    case(Operation) 
+    `ALU_ADD : result <= Accumulator + BRegister ;
+    `ALU_SUB : result <= Accumulator - BRegister ;
+    `ALU_INC : result <= Accumulator + 1 ;
+    `ALU_DCR : result <= Accumulator - 1 ;
+    default : result <= result ;
+
+    endcase
+
+end
+
+assign BusOut = ALUOut ? result[7:0] : 8'bzzzz_zzzz;
+assign Flags = {~|result[7:0],result[8]};  // Zero,Carry
+
+
+endmodule
+
+
+module Accumulator(
+    input [7:0]BusIn,
+    input clk,rst,Ain,ALowerIn,Aout,
+    output [7:0]BusOut,ALUIn
+);
+
+reg [7:0]temp;
+always @(posedge clk,rst) begin
+    if(rst == 1'b1)
+    temp <= 8'b0000_0000;
+    else if (Ain == 1'b1)
+    temp <= BusIn ;
+    else if (ALowerIn == 1'b1)
+    temp <= {4'b0000,BusIn[3:0]};
+
+end
+
+assign BusOut = Aout ? temp : 8'bzzzz_zzzz;
+assign ALUIn  = temp ; 
+    
+
+endmodule
+
+
+module BRegister(
+    input [7:0]BusIn,
+    input clk,rst,Bin,
+    output [7:0]ALUIn
+);
+
+reg [7:0]temp;
+
+always @(posedge clk or rst) begin
+    if (rst == 1'b1)
+    temp <= 8'b0000_0000;
+    else if( Bin == 1'b1)
+    temp <= BusIn;
+end
+
+assign ALUIn = temp ;
+
+
+
+endmodule
+
+
+module MAR(
+    input [3:0]BusIn,
+    input clk,rst,MARIn,
+    output [3:0]RAMIn
+);
+
+reg [3:0]temp;
+
+always @(posedge clk or rst ) begin
+
+    if (rst == 1'b1)
+    temp <= 4'b0000;
+    else if (MARIn == 1'b1)
+    temp <= BusIn ;
+  
+end
+
+
+    assign RAMIn = temp ;
+
+endmodule
+
+
+module IR(
+    input [7:0]BusIn,
+    input clk,rst,IRIn,IROut,
+    output [3:0]BusOut,CUIn
+);
+
+reg [7:0]temp;
+
+always @(posedge clk or rst) begin
+
+    if (rst == 1'b1)
+    temp <= 8'b0000_0000;
+    else if( IRIn == 1'b1)
+    temp <= BusIn ;
+end
+
+assign CUIn = temp[7:4];
+assign BusOut = IROut? temp[3:0] : 4'bzzzz ;
+
+
+endmodule
+
+module PC(
+    input [3:0]BusIn,
+    input clk,rst,PCInc,PCOut,PCIn,
+    output [3:0]BusOut
+);
+
+reg [3:0]temp;
+
+always @(posedge clk or rst) begin
+
+    if(rst ==1'b1)
+    temp <= 4'b0000;
+    else if(PCInc == 1'b1)
+    temp <= temp + 1;
+    else if(PCIn == 1'b1)
+    temp <= BusIn;
+
+end
+
+assign BusOut = PCOut ? temp : 4'bzzzz;
+
+
+
+endmodule 
+
+
+
+module OutputReg(
+    input [7:0]BusIn,
+    input clk,rst,OutLoad,
+    output [7:0]Out
+);
+
+reg [7:0]temp;
+
+always @(posedge clk or rst) begin
+
+    if( rst == 1'b1 )
+    temp <= 8'b0000_0000;
+    else if(OutLoad ==1'b1)
+    temp <= BusIn ;
+    
+end
+
+assign Out = temp ;
+
+
+endmodule
+
+
+module CPU(
+    input clk,rst
+);
+
+wire [7:0]Bus,AToALU,BToALU;
+wire [3:0]MarToRam,IRToCU;
+wire [1:0]FlagToCU,ALUToFlag;
+wire [17:0]CS;
+wire clk;
+
+RAM RAM(Bus,MarToRam,clk,CS[1],CS[0],Bus);
+FlagRegister FlagRegister(
+    input [1:0]FlagsIn,
+    input FlagEnable,
+    input FlagOutEnable,
+    input clk,
+    output [1:0]FlagOut 
+);
+
 
 
 
