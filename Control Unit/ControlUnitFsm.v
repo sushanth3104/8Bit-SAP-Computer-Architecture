@@ -19,7 +19,7 @@ module controlunit(
     input [3:0]opcode,
     input [1:0]flagReg,
     input clk,rst,
-    input [16:0]ControlSignal
+    output [16:0]ControlSignal
 );
 
 // Micro Opertions 
@@ -247,6 +247,8 @@ always @(state,opcode)begin
     endcase
     
 end
+
+assign ControlSignal = temp ;
 
 
 
