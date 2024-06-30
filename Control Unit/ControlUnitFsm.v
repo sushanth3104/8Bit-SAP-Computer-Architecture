@@ -10,7 +10,9 @@
 `define NOP  4'b0111
 `define JMP  4'b1000
 `define JMPC 4'b1001
-`define HLT  4'b1111
+`define LDI  4'b1010
+`define OUT  4'b1011
+`define HLT  4'b1100
 
 
 module controlunit(
@@ -58,9 +60,15 @@ parameter jmp1 = 19;
 
 // Jump if Zero States
 parameter jmpz1 = 20;
+parameter jmpz2 = 21
 
 // Jump if Carry States
-parameter jmpc1 = 21;
+parameter jmpc1 = 22;
+parameter jmpc2 = 23;
+
+// Load Immediate States
+parameter ldi1 = 24;
+
 
 
 reg [16:0]temp ;
@@ -77,18 +85,42 @@ end
 always@(state) begin
     case(state)
     idle :   temp <= 0 ;
-    fetch1 : temp <= 14'b01000000000001;
-    fetch2 : temp <= 14'b00010100000010;
-    lda1   : temp <= 14'b01001000000000;
-    lda2   : temp <= 14'b00010010000000;
-    add1   : temp <= 14'b01001000000000;
-    add2   : temp <= 14'b00010000001000;
-    add3   : temp <= 14'b00000010100000;
-    sub1   : temp <= 14'b01001000000000;
-    sub2   : temp <= 14'b00010000011000;
-    sub3   : temp <= 14'b00000010100000;
-    out    : temp <= 14'b00000001000100;
-    hlt1    : temp <= 14'b10000000000000;
+    fetch1 : temp <= 17'b0_0000_0000_0100_1000;
+    fetch2 : temp <= 17'b0_0000_0001_0001_0010;
+
+    lda1   : temp <= 17'b0_0000_0000_1100_0000;
+    lda2   : temp <= 17'b0_0001_0000_0000_0010;
+
+    add1   : temp <= 17'b0_0000_0000_1100_0000;
+    add2   : temp <= 17'b0_0000_0010_0000_0010;
+    add3   : temp <= 17'b0_1001_0000_0000_0000;
+
+    sub1   : temp <= 17'b0_0000_0000_1100_0000;
+    sub2   : temp <= 17'b0_0010_0010_0000_0010;
+    sub3   : temp <= 17'b0_1001_0000_0000_0000;
+
+    out    : temp <= 17'b0_0000_0100_0010_0000;
+
+    hlt1   : temp <= 17'b0_0000_0000_0000_0000;
+
+    inc1   : temp <= 17'b0_0100_0000_0000_0000;
+    inc2   : temp <= 17'b0_1001_0000_0000_0000;
+
+    dec1   : temp <= 17'b0_0110_0000_0000_0000;
+    dec2   : temp <= 17'b0_1001_0000_0000_0000;
+
+    sta1   : temp <= 17'b0_0000_0000_1100_0000;
+    sta2   : temp <= 17'b0_0000_0100_0000_0001;
+
+    jmp1   : temp <= 17'b0_0000_0000_1000_0100;
+
+    jmpz1  : temp <= 17'b1_0000_0000_0000_0000;
+    jmpz2  : temp <= 17'b0_0000_0000_1000_0100;
+
+    jmpc1  : temp <= 17'b1_0000_0000_0000_0000;
+    jmpc2  : temp <= 17'b0_0000_0000_1000_0100;
+
+    ldi1   : temp <= 17'b0_0000_1000_1000_0000;
 
     default : temp <= 0;
 
@@ -97,6 +129,124 @@ always@(state) begin
 end
 
 
+
+always @(state,opcode)begin
+    case(state)
+    idle : begin
+        nstate = fetch1 ;
+    end
+    fetch1 : begin
+        nstate = fetch2 ;
+    end
+    fetch2 : begin
+        case(opcode)
+        `LDA : nstate = lda1 ;
+        `ADD : nstate = add1 ;
+        `SUB : nstate = sub1 ;
+        `OUT : nstate = out ;
+        `HLT : nstate = hlt ;
+        `STA : nstate = sta1;
+        `INCA: nstate = inc1;
+        `DECR: nstate = dec1;
+        `JMP : nstate = jmp1 ;
+        `JMPZ: nstate = jmpz1;
+        `JMPC: nstate = jmpc1;
+        `NOP : nstate = fetch1;
+        `LDI : nstate = ldi1 ;
+        default: nstate = idle;
+       endcase
+
+    end
+    lda1 : begin
+        nstate = lda2 ;
+
+    end
+    lda2 : begin
+        nstate = fetch1 ;
+    end
+    add1 : begin
+        nstate = add2;
+
+    end
+    add2 : begin
+        nstate = add3 ;
+
+    end
+    add3 : begin
+        nstate = fetch1;
+    end
+    sub1 : begin
+        nstate = sub2;
+    end
+    sub2 : begin
+        nstate = sub3 ;
+    end
+    sub3 : begin
+        nstate = fetch1;
+    end
+
+    out : begin
+        nstate = fetch1;
+    end
+
+    hlt1 : begin
+        nstate = hlt1 ;
+    end
+
+    sta1 : begin
+        nstate = sta2;
+    end
+    sta2 : begin
+        nstate = fetch1;
+    end
+
+    inc1 : begin 
+        nstate = inc2 ;
+    end
+    inc2 : begin
+        nstate = fetch1;
+    end
+
+    dec1 : begin
+        nstate = dec2 ;
+    end
+    dec2 : begin
+        nstate = fetch1;
+    end
+
+    jmp1 : begin
+        nstate = fetch1 ;
+    end
+    jmpz1: begin
+        if(flagReg[1] == 1'b1)
+        nstate = jmpz2;
+        else
+        nstate = fetch1 ;
+    end
+
+    jmpz2 : begin
+        nstate = fetch1;
+    end
+    jmpc1: begin
+        if(flagReg[0] == 1'b1)
+        nstate = jmpc2;
+        else
+        nstate = fetch1 ;
+    end
+    jmpc2 : begin
+        nstate = fetch1;
+    end
+    
+    ldi1 : begin
+        nstate = fetch1;
+
+    end
+
+    default : nstate = idle ;
+
+    endcase
+    
+end
 
 
 
