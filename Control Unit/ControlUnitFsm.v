@@ -60,7 +60,7 @@ parameter jmp1 = 19;
 
 // Jump if Zero States
 parameter jmpz1 = 20;
-parameter jmpz2 = 21
+parameter jmpz2 = 21;
 
 // Jump if Carry States
 parameter jmpc1 = 22;
@@ -85,42 +85,42 @@ end
 always@(state) begin
     case(state)
     idle :   temp <= 0 ;
-    fetch1 : temp <= 18'b00_0000_0000_0100_1000;
-    fetch2 : temp <= 18'b00_0000_0001_0001_0010;
+    fetch1 : temp <= 18'h00048;
+    fetch2 : temp <= 18'h00112;
 
-    lda1   : temp <= 18'b00_0000_0000_1100_0000;
-    lda2   : temp <= 18'b00_0001_0000_0000_0010;
+    lda1   : temp <= 18'h000C0;
+    lda2   : temp <= 18'h01002;
 
-    add1   : temp <= 18'b00_0000_0000_1100_0000;
-    add2   : temp <= 18'b10_0000_0010_0000_0010;
-    add3   : temp <= 18'b00_1001_0000_0000_0000;
+    add1   : temp <= 18'h000C0;
+    add2   : temp <= 18'h20202;
+    add3   : temp <= 18'h09000;
 
-    sub1   : temp <= 18'b00_0000_0000_1100_0000;
-    sub2   : temp <= 18'b10_0010_0010_0000_0010;
-    sub3   : temp <= 18'b00_1001_0000_0000_0000;
+    sub1   : temp <= 18'h000C0;
+    sub2   : temp <= 18'h22202;
+    sub3   : temp <= 18'h09000;
 
-    out    : temp <= 18'b00_0000_0100_0010_0000;
+    out    : temp <= 18'h00420;
 
-    hlt1   : temp <= 18'b00_0000_0000_0000_0000;
+    hlt1   : temp <= 18'h00000;
 
-    inc1   : temp <= 18'b10_0100_0000_0000_0000;
-    inc2   : temp <= 18'b00_1001_0000_0000_0000;
+    inc1   : temp <= 18'h24000;
+    inc2   : temp <= 18'h09000;
 
-    dec1   : temp <= 18'b10_0110_0000_0000_0000;
-    dec2   : temp <= 18'b00_1001_0000_0000_0000;
+    dec1   : temp <= 18'h26000;
+    dec2   : temp <= 18'h09000;
 
-    sta1   : temp <= 18'b00_0000_0000_1100_0000;
-    sta2   : temp <= 18'b00_0000_0100_0000_0001;
+    sta1   : temp <= 18'h000C0;
+    sta2   : temp <= 18'h00201;
 
-    jmp1   : temp <= 18'b00_0000_0000_1000_0100;
+    jmp1   : temp <= 18'h00084;
 
-    jmpz1  : temp <= 18'b01_0000_0000_0000_0000;
-    jmpz2  : temp <= 18'b00_0000_0000_1000_0100;
+    jmpz1  : temp <= 18'h10000;
+    jmpz2  : temp <= 18'h00084;
 
-    jmpc1  : temp <= 18'b01_0000_0000_0000_0000;
-    jmpc2  : temp <= 18'b00_0000_0000_1000_0100;
+    jmpc1  : temp <= 18'h10000;
+    jmpc2  : temp <= 18'h00084;
 
-    ldi1   : temp <= 18'b00_0000_1000_1000_0000;
+    ldi1   : temp <= 18'h00880;
 
     default : temp <= 0;
 
@@ -130,7 +130,7 @@ end
 
 
 
-always @(state,opcode)begin
+always @(state,opcode,flagReg)begin
     case(state)
     idle : begin
         nstate = fetch1 ;
@@ -144,7 +144,7 @@ always @(state,opcode)begin
         `ADD : nstate = add1 ;
         `SUB : nstate = sub1 ;
         `OUT : nstate = out ;
-        `HLT : nstate = hlt ;
+        `HLT : nstate = hlt1 ;
         `STA : nstate = sta1;
         `INCA: nstate = inc1;
         `DECR: nstate = dec1;
@@ -190,6 +190,9 @@ always @(state,opcode)begin
     end
 
     hlt1 : begin
+        if(rst == 1'b1)
+        nstate = idle;
+        else 
         nstate = hlt1 ;
     end
 

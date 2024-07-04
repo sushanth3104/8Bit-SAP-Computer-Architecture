@@ -116,7 +116,7 @@ parameter jmp1 = 19;
 
 // Jump if Zero States
 parameter jmpz1 = 20;
-parameter jmpz2 = 21
+parameter jmpz2 = 21;
 
 // Jump if Carry States
 parameter jmpc1 = 22;
@@ -200,7 +200,7 @@ always @(state,opcode)begin
         `ADD : nstate = add1 ;
         `SUB : nstate = sub1 ;
         `OUT : nstate = out ;
-        `HLT : nstate = hlt ;
+        `HLT : nstate = hlt1 ;
         `STA : nstate = sta1;
         `INCA: nstate = inc1;
         `DECR: nstate = dec1;
@@ -488,20 +488,22 @@ module CPU(
     input clk,rst
 );
 
-wire [7:0]Bus,AToALU,BToALU;
+wire [7:0]Bus,AToALU,BToALU,FinalOutput;
 wire [3:0]MarToRam,IRToCU;
 wire [1:0]FlagToCU,ALUToFlag;
 wire [17:0]CS;
-wire clk;
 
 RAM RAM(Bus,MarToRam,clk,CS[1],CS[0],Bus);
-FlagRegister FlagRegister(
-    input [1:0]FlagsIn,
-    input FlagEnable,
-    input FlagOutEnable,
-    input clk,
-    output [1:0]FlagOut 
-);
+FlagRegister FlagRegister(ALUToFlag,CS[17],CS[16],clk,FlagToCU);
+controlunit controlunit(IRToCU,FlagToCU,clk,rst,CS);
+ALU ALU(AToALU,BToALU,{CS[14],CS[13]},CS[15],Bus,ALUToFlag);
+Accumulator Accumulator(Bus,clk,rst,CS[12],CS[11],CS[10],Bus,AToALU);
+BRegister BRegister(Bus,clk,rst,CS[9],BToALU);
+MAR MAR(Bus[3:0],clk,rst,CS[6],MarToRam);
+IR IR(Bus,clk,rst,CS[8],CS[7],Bus[3:0],IRToCU);
+PC PC(Bus[3:0],clk,rst,CS[4],CS[3],CS[2],Bus[3:0]);
+OutputReg OutputReg(Bus,clk,rst,CS[5],FinalOutput);
+
 
 
 
