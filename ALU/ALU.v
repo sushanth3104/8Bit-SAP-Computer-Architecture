@@ -16,8 +16,8 @@ module ALU(
 
 reg [8:0]result;
 
-always@( AluStart == 1'b1 ) begin
-
+always@(*) begin
+    if(AluStart == 1'b1) begin
     case(Operation) 
     `ALU_ADD : result <= Accumulator + BRegister ;
     `ALU_SUB : result <= Accumulator - BRegister ;
@@ -26,6 +26,8 @@ always@( AluStart == 1'b1 ) begin
     default : result <= result ;
 
     endcase
+
+    end
 
 end
 
