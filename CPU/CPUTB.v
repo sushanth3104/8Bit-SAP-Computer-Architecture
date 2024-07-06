@@ -13,13 +13,13 @@ initial begin
     {rst,clk} <= 0; 
     $dumpfile("output.vcd");
     $dumpvars(0,tb);
-    #400 $finish ; 
+    #100000 $finish ;     // Change According to the needs
 end
 
 initial begin
 
 rst <= 1 ; 
-#10;
+#17;
 rst <= 0 ;
 
 end

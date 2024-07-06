@@ -110,7 +110,7 @@ always@(state) begin
     dec2   : temp <= 18'h09000;
 
     sta1   : temp <= 18'h000C0;
-    sta2   : temp <= 18'h00201;
+    sta2   : temp <= 18'h00401;
 
     jmp1   : temp <= 18'h00084;
 

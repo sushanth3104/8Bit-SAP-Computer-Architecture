@@ -9,14 +9,14 @@
 module ALU(
     input [7:0]Accumulator,BRegister,
     input [1:0]Operation,
-    input ALUOut,
+    input ALUOut,AluStart
     output [7:0]BusOut,
     output [1:0]Flags
 );
 
 reg [8:0]result;
 
-always@(*) begin
+always@( AluStart == 1'b1 ) begin
 
     case(Operation) 
     `ALU_ADD : result <= Accumulator + BRegister ;
